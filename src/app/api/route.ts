@@ -19,6 +19,8 @@ export async function GET(request: NextRequest) {
 
   console.log("[+] rj-0: ", rjResponse.length)
   // console.log("[+] rj-response: ", rjResponse)
+  // if (rjResponse.length < 10000)
+  return NextResponse.json({"res": rjResponse.toString()})
 
   // Getting all URLs file names
   const sc = scrapeMp3Urls(rjResponse)
@@ -36,7 +38,7 @@ export async function GET(request: NextRequest) {
   console.log("[+] rj-2: ", result.length)
   console.log("[+] rj-2: ", result)
 
-  return NextResponse.json(result)
+  // return NextResponse.json(result)
 }
 
 // Get the server filename from a URL for the mp3 file
