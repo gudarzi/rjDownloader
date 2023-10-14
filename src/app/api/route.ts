@@ -49,22 +49,22 @@ const getFilenameFromUrl = async (mp3Url: string) => {
     const res = await fetch(parsedUrl.href, options)
 
     if (res.status !== 200) {
-      return ""
+      return res.status.toString()
     }
 
     const contentDisposition = res.headers.get("content-disposition")
     if (!contentDisposition) {
-      return ""
+      return "No Content-Disposition"
     }
 
     const filenameMatch = contentDisposition.match(/filename="(.+)"/)
     if (!filenameMatch) {
-      return ""
+      return "No File Name"
     }
 
     return filenameMatch[1]
   } catch {
-    return ""
+    return "UnExpected Error!"
   }
 }
 
