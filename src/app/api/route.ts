@@ -18,6 +18,7 @@ export async function GET(request: NextRequest) {
   const rjResponse = await getResponse(url)
 
   console.log("[+] rj-0: ", rjResponse.length)
+  console.log("[+] rj-response: ", rjResponse)
 
   // Getting all URLs file names
   const sc = scrapeMp3Urls(rjResponse)
@@ -82,6 +83,6 @@ const getResponse = async (url: string) => {
     const response = await fetch(parsedUrl)
     return await response.text()
   } catch {
-    return ""
+    return "UnExpected error happened when trying to reach the url!"
   }
 }
