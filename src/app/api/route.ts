@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
   const rjResponse = await getResponse(url)
 
   console.log("[+] rj-0: ", rjResponse.length)
-  console.log("[+] rj-response: ", rjResponse)
+  // console.log("[+] rj-response: ", rjResponse)
 
   // Getting all URLs file names
   const sc = scrapeMp3Urls(rjResponse)
@@ -42,12 +42,15 @@ export async function GET(request: NextRequest) {
 // Get the server filename from a URL for the mp3 file
 const getFilenameFromUrl = async (mp3Url: string) => {
   const parsedUrl = new URL(mp3Url)
-  const options = {
-    method: "HEAD",
-  }
 
   try {
-    const res = await fetch(parsedUrl.href, options)
+    const res = await fetch(parsedUrl.href, {
+      method: "HEAD",
+      headers: {
+        "user-agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36",
+      },
+    })
 
     if (res.status !== 200) {
       return res.status.toString()
@@ -80,9 +83,15 @@ const scrapeMp3Urls = (response: string) => {
 const getResponse = async (url: string) => {
   try {
     const parsedUrl = new URL(url)
-    const response = await fetch(parsedUrl)
+    // const response = await fetch(parsedUrl)
+    const response = await fetch(parsedUrl, {
+      headers: {
+        "user-agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36",
+      },
+    })
     return await response.text()
-  } catch {
-    return "UnExpected error happened when trying to reach the url!"
+  } catch (error: any) {
+    return error.message
   }
 }
