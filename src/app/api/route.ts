@@ -7,6 +7,9 @@ export async function GET(request: NextRequest) {
   // Sanity check
   if (!url) return NextResponse.json({})
 
+  console.log("[+] url-0: ", request.nextUrl.href)
+  console.log("[+] url-1: ", url)
+
   // Checking with the valid URL pattern
   const validURLPattern = /^https:\/\/rj\.app\/m\/[A-Za-z0-9]{8}$/
   if (!validURLPattern.test(url)) return NextResponse.json({})
@@ -14,8 +17,12 @@ export async function GET(request: NextRequest) {
   // Getting all provided URLs
   const rjResponse = await getResponse(url)
 
+  console.log("[+] rj-0: ", rjResponse.length)
+
   // Getting all URLs file names
   const sc = scrapeMp3Urls(rjResponse)
+
+  console.log("[+] rj-1: ", sc.length)
 
   // Constructing the response
   const result = await Promise.all(
@@ -24,6 +31,9 @@ export async function GET(request: NextRequest) {
       return { name: filename, url: url } as Result
     })
   )
+
+  console.log("[+] rj-2: ", result.length)
+  console.log("[+] rj-2: ", result)
 
   return NextResponse.json(result)
 }
