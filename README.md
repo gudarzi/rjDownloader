@@ -1,3 +1,9 @@
+# rjDownloader
+
+Provides direct download links from rj. That's all there is for now!
+
+## The following is the next.js default readme file content
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
