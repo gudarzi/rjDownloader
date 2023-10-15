@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
 
     const axiosInstance = axios.create(axiosConfig)
 
-    axiosInstance
+    await axiosInstance
       .get(url, { headers: {} })
       .then((res) => {
         // console.log("Public IP address:", res.data)
