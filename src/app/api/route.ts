@@ -24,17 +24,40 @@ export async function GET(request: NextRequest) {
   // if (rjResponse.length < 10000) {
   if (true) {
     console.log("[-] Direct access failed! Trying the proxy...")
-    // replace with your proxy's hostname and port
-    const proxyHost = "184.178.172.13"
+
+    const proxyIP = "184.178.172.13"
     const proxyPort = 15311
-    // the full socks5 address
-    const proxyOptions = `socks5://${proxyHost}:${proxyPort}`
-    // create the socksAgent for axios
-    const httpsAgent = new SocksProxyAgent(proxyOptions)
-    // create a new axios instance
-    const client = axios.create({ url, httpsAgent })
-    // send the request
-    rjResponse = await client.get("/").then((res) => res.data)
+    const proxyAgent = new SocksProxyAgent(`socks5://${proxyIP}:${proxyPort}`)
+
+    const axiosConfig = {
+      httpsAgent: proxyAgent,
+      httpAgent: proxyAgent,
+      proxy: {
+        protocol: "http", //'http',
+        host: proxyIP, // your http proxy ip
+        port: proxyPort, // your http proxy port
+        // optional - add it if your proxy require auth
+        // auth: {
+        //   username: "myuser",
+        //   password: "mypass",
+        // },
+      },
+    }
+
+    const axiosInstance = axios.create(axiosConfig)
+
+    axiosInstance
+      .get(url)
+      .then((res) => {
+        // console.log("Public IP address:", res.data)
+        rjResponse=res.data
+      })
+      .catch((err) => {
+        console.log(err)
+        return NextResponse.json({})
+      })
+
+    console.log("[+] rj-0: ", rjResponse.length)
   }
   // return NextResponse.json({ res: rjResponse.toString() })
 
