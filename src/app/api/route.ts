@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { Result } from "../../../types"
 import axios from "axios"
+import { SocksProxyAgent } from "socks-proxy-agent"
 
 export async function GET(request: NextRequest) {
   const url = request.nextUrl.searchParams.get("url")
@@ -20,12 +21,20 @@ export async function GET(request: NextRequest) {
 
   console.log("[+] rj-0: ", rjResponse.length)
   // console.log("[+] rj-response: ", rjResponse)
-  if (rjResponse.length < 10000) {
+  // if (rjResponse.length < 10000) {
+  if (true) {
     console.log("[-] Direct access failed! Trying the proxy...")
-    rjResponse = await axios.get(url, {
-      proxy: { host: "184.178.172.13", port: 15311, protocol: "socks5" },
-      maxRedirects: 5,
-    })
+    // replace with your proxy's hostname and port
+    const proxyHost = "184.178.172.13"
+    const proxyPort = 15311
+    // the full socks5 address
+    const proxyOptions = `socks5://${proxyHost}:${proxyPort}`
+    // create the socksAgent for axios
+    const httpsAgent = new SocksProxyAgent(proxyOptions)
+    // create a new axios instance
+    const client = axios.create({ url, httpsAgent })
+    // send the request
+    rjResponse = await client.get("/").then((res) => res.data)
   }
   // return NextResponse.json({ res: rjResponse.toString() })
 
