@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { Result } from "../../../types"
+import axios from "axios"
 
 export async function GET(request: NextRequest) {
   const url = request.nextUrl.searchParams.get("url")
@@ -15,12 +16,18 @@ export async function GET(request: NextRequest) {
   if (!validURLPattern.test(url)) return NextResponse.json({})
 
   // Getting all provided URLs
-  const rjResponse = await getResponse(url)
+  let rjResponse: string = await getResponse(url)
 
   console.log("[+] rj-0: ", rjResponse.length)
   // console.log("[+] rj-response: ", rjResponse)
-  // if (rjResponse.length < 10000)
-  return NextResponse.json({"res": rjResponse.toString()})
+  if (rjResponse.length < 10000) {
+    console.log("[-] Direct access failed! Trying the proxy...")
+    rjResponse = await axios.get(url, {
+      proxy: { host: "184.178.172.13", port: 15311, protocol: "socks5" },
+      maxRedirects: 5,
+    })
+  }
+  // return NextResponse.json({ res: rjResponse.toString() })
 
   // Getting all URLs file names
   const sc = scrapeMp3Urls(rjResponse)
@@ -38,7 +45,7 @@ export async function GET(request: NextRequest) {
   console.log("[+] rj-2: ", result.length)
   console.log("[+] rj-2: ", result)
 
-  // return NextResponse.json(result)
+  return NextResponse.json(result)
 }
 
 // Get the server filename from a URL for the mp3 file
