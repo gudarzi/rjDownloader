@@ -47,10 +47,11 @@ export async function GET(request: NextRequest) {
     const axiosInstance = axios.create(axiosConfig)
 
     axiosInstance
-      .get(url)
+      .get(url, { headers: {} })
       .then((res) => {
         // console.log("Public IP address:", res.data)
-        rjResponse=res.data
+        console.log("[+] Request Headers:\n", res.request.headers)
+        rjResponse = res.data
       })
       .catch((err) => {
         console.log(err)
