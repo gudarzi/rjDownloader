@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
 
     const proxyIP = "184.178.172.13"
     const proxyPort = 15311
-    const proxyAgent = new SocksProxyAgent(`socks5://${proxyIP}:${proxyPort}`)
+    const proxyAgent = new SocksProxyAgent(`socks://${proxyIP}:${proxyPort}`)
 
     const axiosConfig = {
       httpsAgent: proxyAgent,
