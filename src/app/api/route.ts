@@ -18,39 +18,34 @@ export async function GET(request: NextRequest) {
 
   // Getting all provided URLs
   let rjResponse: string = await getResponse(url)
-
   console.log("[+] rj-0: ", rjResponse.length)
-  // console.log("[+] rj-response: ", rjResponse)
-  // if (rjResponse.length < 10000) {
-  if (true) {
+  
+  if (rjResponse.length < 10000) {
     console.log("[-] Direct access failed! Trying the proxy...")
 
-    const proxyIP = "184.178.172.13"
-    const proxyPort = 15311
-    const proxyAgent = new SocksProxyAgent(`socks://${proxyIP}:${proxyPort}`)
-
+    const proxyIP = "184.178.172.18"
+    const proxyPort = 15280
+    const proxyAgent = new SocksProxyAgent(`socks5://${proxyIP}:${proxyPort}`)
+    
     const axiosConfig = {
       httpsAgent: proxyAgent,
-      httpAgent: proxyAgent,
-      proxy: {
-        protocol: "http", //'http',
-        host: proxyIP, // your http proxy ip
-        port: proxyPort, // your http proxy port
-        // optional - add it if your proxy require auth
+      // httpAgent: proxyAgent2,
+      // proxy: {
+        // protocol: "https",
+        // host: `socks://${proxyIP}`,
+        // port: proxyPort,
         // auth: {
         //   username: "myuser",
         //   password: "mypass",
         // },
-      },
+      // },
     }
 
-    const axiosInstance = axios.create(axiosConfig)
-
-    await axiosInstance
-      .get(url, { headers: {} })
+    // ignoring ssl errors
+    axiosConfig.httpsAgent.options.rejectUnauthorized=false
+    
+    await axios.get(url, axiosConfig)
       .then((res) => {
-        // console.log("Public IP address:", res.data)
-        console.log("[+] Request Headers:\n", res.request.headers)
         rjResponse = res.data
       })
       .catch((err) => {
@@ -64,7 +59,6 @@ export async function GET(request: NextRequest) {
 
   // Getting all URLs file names
   const sc = scrapeMp3Urls(rjResponse)
-
   console.log("[+] rj-1: ", sc.length)
 
   // Constructing the response
@@ -76,7 +70,7 @@ export async function GET(request: NextRequest) {
   )
 
   console.log("[+] rj-2: ", result.length)
-  console.log("[+] rj-2: ", result)
+  // console.log("[+] rj-2: ", result)
 
   return NextResponse.json(result)
 }
