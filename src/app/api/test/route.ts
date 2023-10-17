@@ -4,7 +4,7 @@ import { SocksProxyAgent } from "socks-proxy-agent"
 
 export async function GET(request: NextRequest) {
   // const url = "https://httpbin.org/ip"
-  const url = "https://104.21.45.54:443/m/Qq6BkB0q:"
+  const url = "https://104.21.45.54:443/m/Qq6BkB0q"
 
   const proxyIP = "184.178.172.18"
   const proxyPort = 15280
