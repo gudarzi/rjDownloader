@@ -1,70 +1,41 @@
 import { NextRequest, NextResponse } from "next/server"
 import { Result } from "../../../types"
 import axios from "axios"
-import { SocksProxyAgent } from "socks-proxy-agent"
+// import { SocksProxyAgent } from "socks-proxy-agent"
 
 export async function GET(request: NextRequest) {
-  const url = request.nextUrl.searchParams.get("url")
+  const fullUrl = request.nextUrl.searchParams.get("url")
 
   // Sanity check
-  if (!url) return NextResponse.json({})
-
-  console.log("[+] url-0: ", request.nextUrl.href)
-  console.log("[+] url-1: ", url)
+  if (!fullUrl) return NextResponse.json({})
 
   // Checking with the valid URL pattern
   const validURLPattern = /^https:\/\/rj\.app\/m\/[A-Za-z0-9]{8}$/
-  if (!validURLPattern.test(url)) return NextResponse.json({})
+  if (!validURLPattern.test(fullUrl)) return NextResponse.json({})
 
-  // Getting all provided URLs
-  let rjResponse: string = await getResponse(url)
-  console.log("[+] rj-0: ", rjResponse.length)
+  let rjResponse: string = ""
 
-  if (rjResponse.length < 10000) {
-    console.log("[-] Direct access failed! Trying the proxy...")
+  const rjPath = fullUrl.split("rj.app/")[1]
+  const url = `https://104.21.45.54:443\/${rjPath}`
 
-    const proxyIP = "184.178.172.18"
-    const proxyPort = 15280
-    const proxyAgent = new SocksProxyAgent(`socks5://${proxyIP}:${proxyPort}`)
-
-    const axiosConfig = {
-      httpsAgent: proxyAgent,
-      // httpAgent: proxyAgent2,
-      // proxy: {
-      // protocol: "https",
-      // host: `socks://${proxyIP}`,
-      // port: proxyPort,
-      // auth: {
-      //   username: "myuser",
-      //   password: "mypass",
-      // },
-      // },
+  await axios
+    .get(url, {
       headers: {
         "user-agent":
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36",
+        host: "rj.app",
       },
-    }
-
-    // ignoring ssl errors
-    axiosConfig.httpsAgent.options.rejectUnauthorized = false
-
-    await axios
-      .get(url, axiosConfig)
-      .then((res) => {
-        rjResponse = res.data
-      })
-      .catch((err) => {
-        console.log(err)
-        return NextResponse.json({})
-      })
-
-    console.log("[+] rj-0: ", rjResponse.length)
-  }
-  // return NextResponse.json({ res: rjResponse.toString() })
+    })
+    .then((res) => {
+      rjResponse = res.data
+    })
+    .catch((err) => {
+      console.log(err)
+      return NextResponse.json({})
+    })
 
   // Getting all URLs file names
   const sc = scrapeMp3Urls(rjResponse)
-  console.log("[+] rj-1: ", sc.length)
 
   // Constructing the response
   const result = await Promise.all(
@@ -73,9 +44,6 @@ export async function GET(request: NextRequest) {
       return { name: filename, url: url } as Result
     })
   )
-
-  console.log("[+] rj-2: ", result.length)
-  // console.log("[+] rj-2: ", result)
 
   return NextResponse.json(result)
 }
@@ -121,18 +89,18 @@ const scrapeMp3Urls = (response: string) => {
 }
 
 // Makes a GET request to an arbitrary URL (with redirection enabled)
-const getResponse = async (url: string) => {
-  try {
-    const parsedUrl = new URL(url)
-    // const response = await fetch(parsedUrl)
-    const response = await fetch(parsedUrl, {
-      headers: {
-        "user-agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36",
-      },
-    })
-    return await response.text()
-  } catch (error: any) {
-    return error.message
-  }
-}
+// const getResponse = async (url: string) => {
+//   try {
+//     const parsedUrl = new URL(url)
+//     // const response = await fetch(parsedUrl)
+//     const response = await fetch(parsedUrl, {
+//       headers: {
+//         "user-agent":
+//           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36",
+//       },
+//     })
+//     return await response.text()
+//   } catch (error: any) {
+//     return error.message
+//   }
+// }
