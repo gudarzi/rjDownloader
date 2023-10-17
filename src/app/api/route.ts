@@ -37,7 +37,6 @@ export async function GET(request: NextRequest) {
   await axios
     .get(url, axiosConfig)
     .then((res) => {
-      console.log("[+] ", res.data.length)
       rjResponse = res.data
     })
     .catch((err) => {
