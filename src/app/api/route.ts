@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { Result } from "../../../types"
 import axios from "axios"
-// import { SocksProxyAgent } from "socks-proxy-agent"
+import { SocksProxyAgent } from "socks-proxy-agent"
 
 export async function GET(request: NextRequest) {
   const fullUrl = request.nextUrl.searchParams.get("url")
@@ -18,16 +18,24 @@ export async function GET(request: NextRequest) {
   const rjPath = fullUrl.split("rj.app/")[1]
   const url = `https://104.21.45.54:443\/${rjPath}`
 
-  console.log("[+] ", url)
+  const proxyIP = "184.178.172.18"
+  const proxyPort = 15280
+  const proxyAgent = new SocksProxyAgent(`socks5://${proxyIP}:${proxyPort}`)
+
+  const axiosConfig = {
+    httpsAgent: proxyAgent,
+    headers: {
+      "user-agent":
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36",
+      host: "rj.app",
+    },
+  }
+
+  // ignoring ssl errors
+  axiosConfig.httpsAgent.options.rejectUnauthorized = false
 
   await axios
-    .get(url, {
-      headers: {
-        "user-agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36",
-        host: "rj.app",
-      },
-    })
+    .get(url, axiosConfig)
     .then((res) => {
       console.log("[+] ", res.data.length)
       rjResponse = res.data
