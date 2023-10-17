@@ -4,7 +4,7 @@ import { SocksProxyAgent } from "socks-proxy-agent"
 
 export async function GET(request: NextRequest) {
   // const url = "https://httpbin.org/ip"
-  const url = "https://chye8zv2vtc0000xwg2ggkmw8foyyyyyn.oast.fun"
+  const url = "https://104.21.45.54:443/m/Qq6BkB0q:"
 
   const proxyIP = "184.178.172.18"
   const proxyPort = 15280
@@ -23,7 +23,8 @@ export async function GET(request: NextRequest) {
     // },
     // },
     headers: {
-      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36"
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36",
+      "host": "rj.app"
     }
   }
 
@@ -53,7 +54,8 @@ export async function GET(request: NextRequest) {
 
   await axios
     .get(url,{headers: {
-      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36"
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36",
+      "host": "rj.app"
     }})
     // .get(url)
     .then((res) => {
