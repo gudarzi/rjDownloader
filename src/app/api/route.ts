@@ -3,6 +3,8 @@ import { Result } from "../../../types"
 import axios from "axios"
 import { SocksProxyAgent } from "socks-proxy-agent"
 
+export const revalidate = 0
+
 export async function GET(request: NextRequest) {
   const fullUrl = request.nextUrl.searchParams.get("url")
 

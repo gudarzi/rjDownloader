@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server"
 import axios from "axios"
 import { SocksProxyAgent } from "socks-proxy-agent"
 
+export const revalidate = 0
+
 export async function POST(request: NextRequest) {
   // const url = "https://httpbin.org/ip"
   // const url = "https://104.21.45.54:443/m/Qq6BkB0q"
