@@ -18,6 +18,8 @@ export async function GET(request: NextRequest) {
   const rjPath = fullUrl.split("rj.app/")[1]
   const url = `https://104.21.45.54:443\/${rjPath}`
 
+  console.log("[+] ", url)
+
   await axios
     .get(url, {
       headers: {
@@ -27,6 +29,7 @@ export async function GET(request: NextRequest) {
       },
     })
     .then((res) => {
+      console.log("[+] ", res.data.length)
       rjResponse = res.data
     })
     .catch((err) => {
