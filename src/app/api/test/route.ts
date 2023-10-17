@@ -2,11 +2,12 @@ import { NextRequest, NextResponse } from "next/server"
 import axios from "axios"
 import { SocksProxyAgent } from "socks-proxy-agent"
 
-export async function GET(request: NextRequest) {
+export async function POST(request: NextRequest) {
   // const url = "https://httpbin.org/ip"
   // const url = "https://104.21.45.54:443/m/Qq6BkB0q"
 
-  const fullUrl = request.nextUrl.searchParams.get("url")
+  const reqBody = await request.json()
+  const fullUrl = reqBody.url
 
   // Sanity check
   if (!fullUrl) return NextResponse.json({})
@@ -14,7 +15,7 @@ export async function GET(request: NextRequest) {
   // Checking with the valid URL pattern
   const validURLPattern = /^https:\/\/rj\.app\/m\/[A-Za-z0-9]{8}$/
   if (!validURLPattern.test(fullUrl)) return NextResponse.json({})
-  
+
   const rjPath = fullUrl.split("rj.app/")[1]
   const url = `https://104.21.45.54:443\/${rjPath}`
 
@@ -24,16 +25,6 @@ export async function GET(request: NextRequest) {
 
   const axiosConfig = {
     httpsAgent: proxyAgent,
-    // httpAgent: proxyAgent2,
-    // proxy: {
-    // protocol: "https",
-    // host: `socks://${proxyIP}`,
-    // port: proxyPort,
-    // auth: {
-    //   username: "myuser",
-    //   password: "mypass",
-    // },
-    // },
     headers: {
       "user-agent":
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36",
@@ -70,14 +61,11 @@ export async function GET(request: NextRequest) {
         "host": "rj.app",
       },
     })
-    // .get(url)
     .then((res) => {
-      // console.log(res.request)
       results.push({
         results: res.data,
         requestData: {
           headers: res.request._header,
-          // options: res.request._redirectable._options,
         },
         responseHeaders: res.headers,
       })
