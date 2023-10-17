@@ -21,6 +21,9 @@ export async function GET(request: NextRequest) {
     //   password: "mypass",
     // },
     // },
+    headers: {
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36"
+    }
   }
 
   // ignoring ssl errors
@@ -29,10 +32,10 @@ export async function GET(request: NextRequest) {
   let results: any = []
 
   await axios
-    // .get(url, axiosConfig)
-    .get(url)
+    .get(url, axiosConfig)
+    // .get(url)
     .then((res) => {
-      console.log(res.request)
+      // console.log(res.request)
       results = NextResponse.json({
         results: res.data,
         requestData: {
