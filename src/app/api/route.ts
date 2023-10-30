@@ -8,6 +8,8 @@ export const revalidate = 0
 export async function GET(request: NextRequest) {
   const fullUrl = request.nextUrl.searchParams.get("url")
 
+  const API_KEY = process.env.WS_API_KEY
+
   // Sanity check
   if (!fullUrl) return NextResponse.json({})
 
@@ -15,36 +17,46 @@ export async function GET(request: NextRequest) {
   const validURLPattern = /^https:\/\/rj\.app\/m\/[A-Za-z0-9]{8}$/
   if (!validURLPattern.test(fullUrl)) return NextResponse.json({})
 
-  let rjResponse: string = ""
+  // let rjResponse: string = ""
 
-  const rjPath = fullUrl.split("rj.app/")[1]
-  const url = `https://104.21.45.54:443\/${rjPath}`
+  // const rjPath = fullUrl.split("rj.app/")[1]
+  // const url = `https://104.21.45.54:443\/${rjPath}`
 
-  const proxyIP = "184.178.172.18"
-  const proxyPort = 15280
-  const proxyAgent = new SocksProxyAgent(`socks5://${proxyIP}:${proxyPort}`)
+  // const proxyIP = "184.178.172.18"
+  // const proxyPort = 15280
+  // const proxyAgent = new SocksProxyAgent(`socks5://${proxyIP}:${proxyPort}`)
 
-  const axiosConfig = {
-    httpsAgent: proxyAgent,
-    headers: {
-      "user-agent":
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36",
-      host: "rj.app",
-    },
-  }
+  // const axiosConfig = {
+  //   httpsAgent: proxyAgent,
+  //   headers: {
+  //     "user-agent":
+  //       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36",
+  //     host: "rj.app",
+  //   },
+  // }
 
-  // ignoring ssl errors
-  axiosConfig.httpsAgent.options.rejectUnauthorized = false
+  // // ignoring ssl errors
+  // axiosConfig.httpsAgent.options.rejectUnauthorized = false
 
-  await axios
-    .get(url, axiosConfig)
-    .then((res) => {
-      rjResponse = res.data
-    })
-    .catch((err) => {
-      console.log(err)
-      return NextResponse.json({})
-    })
+  // await axios
+  //   .get(url, axiosConfig)
+  //   .then((res) => {
+  //     rjResponse = res.data
+  //   })
+  //   .catch((err) => {
+  //     console.log(err)
+  //     return NextResponse.json({})
+  //   })
+
+  const rjResponse = await axios.get('https://api.webscraping.ai/html', {
+    params: {
+      api_key: API_KEY,
+      use_500: true,
+      url: fullUrl
+    }
+  })
+    .then(response => response.data)
+    .catch(error => error.response.data)
 
   // Getting all URLs file names
   const sc = scrapeMp3Urls(rjResponse)
